@@ -1,0 +1,8 @@
+pandas
+numpy<2.0
+matplotlib
+seaborn
+librosa
+scikit-learn
+ipython
+tensorflow==2.16.1
