@@ -2,13 +2,17 @@
 
 ## What was done so far
 
-- Created `requirements.txt` and pinned compatible versions for TensorFlow on
-  Windows (notably `numpy<2.0`).
-- Set up and used a local virtual environment `.venv` to isolate dependencies.
-- Recommended using TensorFlow's bundled Keras imports in the notebook.
-- Guided updating the dataset loading path from `/kaggle/input` to a local
-  Windows path in the notebook.
-- Verified TensorFlow import (`numpy 1.26.4`, `tensorflow 2.16.1`).
+- Created `requirements.txt` with TensorFlow 2.16.1 and `numpy<2.0` pins for
+  Windows compatibility.
+- Added a FastAPI backend with a model loader and `/api/predict` endpoint for
+  emotion inference.
+- Added a modern frontend that captures microphone audio, encodes WAV, and
+  renders emotion predictions.
+- Implemented live streaming mode (continuous updates while recording).
+- Added model training scripts (`train_model.py` and `train_model_auto.py`) and
+  a reusable training function.
+- Added deployment configs for Render and Railway.
+- Documented the end-to-end flow in `LIVE_APP_FLOW.md`.
 
 ## Notebook cell guide (by cell number)
 
@@ -62,3 +66,49 @@ Cell 32: Notes from the tutorial about best validation accuracy and next steps.
 Cell 34: Plot train/validation accuracy over epochs.
 
 Cell 35: Plot train/validation loss over epochs.
+
+## Web app architecture
+
+### Frontend (browser)
+
+Files:
+- `app/static/index.html`
+- `app/static/styles.css`
+- `app/static/app.js`
+
+Behavior:
+- Uses `getUserMedia` + Web Audio API to capture mic audio.
+- Encodes PCM audio into WAV in the browser.
+- Sends audio via `multipart/form-data` to `/api/predict`.
+- Renders the top emotion label, confidence, and full score list.
+- Live streaming mode sends rolling 3s windows every ~1.5s while recording.
+
+### Backend (FastAPI)
+
+Files:
+- `app/main.py`: FastAPI app, health check, static UI, and startup model loading.
+- `app/model.py`: Loads `models/ser_lstm.keras` + `models/labels.json` and runs
+  prediction.
+- `app/audio.py`: Audio loading, MFCC extraction, and normalization.
+
+Endpoints:
+- `GET /` serves the web UI.
+- `GET /api/health` health probe.
+- `POST /api/predict` returns `{label, confidence, scores}`.
+
+### Model training
+
+Files:
+- `train_model.py`: CLI training script matching notebook pipeline.
+- `train_model_auto.py`: Auto-detects dataset path via `TESS_DATASET_DIR` or
+  search under `--root`.
+
+Outputs:
+- `models/ser_lstm.keras`
+- `models/labels.json`
+
+### Deployment
+
+Files:
+- `render.yaml`: Render service definition.
+- `Procfile`: Generic process start command.

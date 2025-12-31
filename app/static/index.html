@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Live Speech Emotion Recognition</title>
+    <link rel="stylesheet" href="/static/styles.css" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <main class="page">
+      <header class="hero">
+        <p class="tag">Live Demo</p>
+        <h1>Emotion-Aware Speech Capture</h1>
+        <p class="subtitle">
+          Record a short clip and get an emotion prediction from your trained
+          model.
+        </p>
+      </header>
+
+      <section class="panel">
+        <div class="panel__left">
+          <div class="meter">
+            <div class="meter__ring"></div>
+            <div class="meter__core">
+              <span id="emotionLabel">—</span>
+              <small id="emotionConfidence">Waiting for audio</small>
+            </div>
+          </div>
+        </div>
+        <div class="panel__right">
+          <div class="controls">
+            <button id="recordBtn" class="btn btn--primary">
+              Start Recording
+            </button>
+            <button id="resetBtn" class="btn btn--ghost" disabled>
+              Reset
+            </button>
+            <label class="toggle">
+              <input type="checkbox" id="liveToggle" />
+              <span class="toggle__track"></span>
+              <span class="toggle__label">Live streaming</span>
+            </label>
+          </div>
+          <p id="status" class="status">
+            Tap “Start Recording” and speak for 3–5 seconds.
+          </p>
+          <div class="scores">
+            <h3>Emotion Scores</h3>
+            <div id="scoreList" class="scores__list"></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="notes">
+        <h2>How it works</h2>
+        <ol>
+          <li>Microphone audio is captured in-browser.</li>
+          <li>Audio is encoded to WAV and sent to the API.</li>
+          <li>The backend extracts MFCC features and runs the LSTM model.</li>
+        </ol>
+      </section>
+    </main>
+
+    <script src="/static/app.js"></script>
+  </body>
+</html>

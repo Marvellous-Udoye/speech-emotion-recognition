@@ -22,6 +22,29 @@ Redistributable 2015-2022 (x64), then restart the notebook kernel.
 TensorFlow 2.16 on Windows requires `numpy<2.0`. This is pinned in
 `requirements.txt`.
 
+## Live demo (Web app)
+
+Train the model (required once):
+
+```bash
+python train_model.py --data-dir "C:\Users\Marvel\Desktop\codes\collabs\speech-emotion-recognition\TESS Toronto emotional speech set data"
+```
+
+Or auto-detect the dataset:
+
+```bash
+python train_model_auto.py --root "C:\Users\Marvel\Desktop\codes\collabs\speech-emotion-recognition"
+```
+
+Run the web app:
+
+```bash
+uvicorn app.main:app --reload
+```
+
+Open `http://127.0.0.1:8000` and allow microphone access. Turn on "Live
+streaming" for continuous updates while recording.
+
 ## Notebook usage
 
 1) Open `Speech Emotion Recognition - Sound Classification.ipynb`
@@ -48,6 +71,19 @@ for dirname, _, filenames in os.walk(
 
 The baseline LSTM model in the notebook typically reaches around 65-72%
 validation accuracy depending on random seed and environment.
+
+## Deployment
+
+Recommended: deploy the FastAPI app to Render or Railway.
+
+- Render: create a Web Service from this repo, set the build command to
+  `pip install -r requirements.txt`, start command `uvicorn app.main:app --host 0.0.0.0 --port 8000`.
+- Railway: similar setup with the same start command.
+
+Vercel is optimized for frontend/serverless and is not a good fit for a
+stateful FastAPI model service.
+
+For a full process/flow explanation, see `LIVE_APP_FLOW.md`.
 
 
 ## Dataset Information
