@@ -1,6 +1,6 @@
 services:
   - type: web
-    name: ser-live
+    name: speech-emotion-recognition
     env: python
     plan: free
     buildCommand: pip install -r requirements.txt
