@@ -47,6 +47,7 @@ def run_training(
     batch_size: int = 64,
     model_out: Path = Path("models/ser_lstm.keras"),
     labels_out: Path = Path("models/labels.json"),
+    history_out: Path = Path("models/history.json"),
 ) -> None:
     paths, labels = collect_dataset(data_dir)
     if not paths:
@@ -72,11 +73,13 @@ def run_training(
 
     model.save(model_out)
     labels_out.write_text(json.dumps(label_list, indent=2), encoding="utf-8")
+    history_out.write_text(json.dumps(history.history, indent=2), encoding="utf-8")
 
     best_val = max(history.history.get("val_accuracy", [0]))
     print(f"Training complete. Best val accuracy: {best_val:.4f}")
     print(f"Saved model to {model_out}")
     print(f"Saved labels to {labels_out}")
+    print(f"Saved history to {history_out}")
 
 
 def main() -> None:

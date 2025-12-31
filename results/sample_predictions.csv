@@ -1,0 +1,51 @@
+path,true_label,pred_label,correct
+C:\Users\Marvel\Desktop\codes\collabs\speech-emotion-recognition\TESS Toronto emotional speech set data\OAF_Fear\OAF_home_fear.wav,fear,fear,True
+C:\Users\Marvel\Desktop\codes\collabs\speech-emotion-recognition\TESS Toronto emotional speech set data\OAF_Pleasant_surprise\OAF_mess_ps.wav,ps,ps,True
+C:\Users\Marvel\Desktop\codes\collabs\speech-emotion-recognition\TESS Toronto emotional speech set data\YAF_angry\YAF_mill_angry.wav,angry,angry,True
+C:\Users\Marvel\Desktop\codes\collabs\speech-emotion-recognition\TESS Toronto emotional speech set data\TESS Toronto emotional speech set data\OAF_Pleasant_surprise\OAF_which_ps.wav,ps,ps,True
+C:\Users\Marvel\Desktop\codes\collabs\speech-emotion-recognition\TESS Toronto emotional speech set data\TESS Toronto emotional speech set data\OAF_angry\OAF_tough_angry.wav,angry,angry,True
+C:\Users\Marvel\Desktop\codes\collabs\speech-emotion-recognition\TESS Toronto emotional speech set data\OAF_disgust\OAF_thumb_disgust.wav,disgust,disgust,True
+C:\Users\Marvel\Desktop\codes\collabs\speech-emotion-recognition\TESS Toronto emotional speech set data\TESS Toronto emotional speech set data\YAF_pleasant_surprised\YAF_bite_ps.wav,ps,ps,True
+C:\Users\Marvel\Desktop\codes\collabs\speech-emotion-recognition\TESS Toronto emotional speech set data\TESS Toronto emotional speech set data\OAF_angry\OAF_tape_angry.wav,angry,angry,True
+C:\Users\Marvel\Desktop\codes\collabs\speech-emotion-recognition\TESS Toronto emotional speech set data\TESS Toronto emotional speech set data\OAF_Pleasant_surprise\OAF_whip_ps.wav,ps,ps,True
+C:\Users\Marvel\Desktop\codes\collabs\speech-emotion-recognition\TESS Toronto emotional speech set data\TESS Toronto emotional speech set data\YAF_disgust\YAF_five_disgust.wav,disgust,disgust,True
+C:\Users\Marvel\Desktop\codes\collabs\speech-emotion-recognition\TESS Toronto emotional speech set data\YAF_sad\YAF_such_sad.wav,sad,sad,True
+C:\Users\Marvel\Desktop\codes\collabs\speech-emotion-recognition\TESS Toronto emotional speech set data\OAF_Sad\OAF_vote_sad.wav,sad,sad,True
+C:\Users\Marvel\Desktop\codes\collabs\speech-emotion-recognition\TESS Toronto emotional speech set data\OAF_angry\OAF_doll_angry.wav,angry,angry,True
+C:\Users\Marvel\Desktop\codes\collabs\speech-emotion-recognition\TESS Toronto emotional speech set data\OAF_disgust\OAF_pain_disgust.wav,disgust,disgust,True
+C:\Users\Marvel\Desktop\codes\collabs\speech-emotion-recognition\TESS Toronto emotional speech set data\OAF_Pleasant_surprise\OAF_late_ps.wav,ps,ps,True
+C:\Users\Marvel\Desktop\codes\collabs\speech-emotion-recognition\TESS Toronto emotional speech set data\TESS Toronto emotional speech set data\OAF_angry\OAF_yes_angry.wav,angry,angry,True
+C:\Users\Marvel\Desktop\codes\collabs\speech-emotion-recognition\TESS Toronto emotional speech set data\TESS Toronto emotional speech set data\OAF_disgust\OAF_wife_disgust.wav,disgust,disgust,True
+C:\Users\Marvel\Desktop\codes\collabs\speech-emotion-recognition\TESS Toronto emotional speech set data\TESS Toronto emotional speech set data\OAF_disgust\OAF_hire_disgust.wav,disgust,disgust,True
+C:\Users\Marvel\Desktop\codes\collabs\speech-emotion-recognition\TESS Toronto emotional speech set data\OAF_Fear\OAF_date_fear.wav,fear,fear,True
+C:\Users\Marvel\Desktop\codes\collabs\speech-emotion-recognition\TESS Toronto emotional speech set data\YAF_sad\YAF_haze_sad.wav,sad,sad,True
+C:\Users\Marvel\Desktop\codes\collabs\speech-emotion-recognition\TESS Toronto emotional speech set data\TESS Toronto emotional speech set data\OAF_angry\OAF_sail_angry.wav,angry,angry,True
+C:\Users\Marvel\Desktop\codes\collabs\speech-emotion-recognition\TESS Toronto emotional speech set data\OAF_angry\OAF_hole_angry.wav,angry,angry,True
+C:\Users\Marvel\Desktop\codes\collabs\speech-emotion-recognition\TESS Toronto emotional speech set data\YAF_happy\YAF_page_happy.wav,happy,happy,True
+C:\Users\Marvel\Desktop\codes\collabs\speech-emotion-recognition\TESS Toronto emotional speech set data\OAF_Sad\OAF_dip_sad.wav,sad,sad,True
+C:\Users\Marvel\Desktop\codes\collabs\speech-emotion-recognition\TESS Toronto emotional speech set data\TESS Toronto emotional speech set data\YAF_neutral\YAF_deep_neutral.wav,neutral,neutral,True
+C:\Users\Marvel\Desktop\codes\collabs\speech-emotion-recognition\TESS Toronto emotional speech set data\OAF_angry\OAF_read_angry.wav,angry,angry,True
+C:\Users\Marvel\Desktop\codes\collabs\speech-emotion-recognition\TESS Toronto emotional speech set data\OAF_disgust\OAF_jail_disgust.wav,disgust,disgust,True
+C:\Users\Marvel\Desktop\codes\collabs\speech-emotion-recognition\TESS Toronto emotional speech set data\OAF_Pleasant_surprise\OAF_yearn_ps.wav,ps,ps,True
+C:\Users\Marvel\Desktop\codes\collabs\speech-emotion-recognition\TESS Toronto emotional speech set data\OAF_Pleasant_surprise\OAF_talk_ps.wav,ps,ps,True
+C:\Users\Marvel\Desktop\codes\collabs\speech-emotion-recognition\TESS Toronto emotional speech set data\OAF_happy\OAF_kite_happy.wav,happy,happy,True
+C:\Users\Marvel\Desktop\codes\collabs\speech-emotion-recognition\TESS Toronto emotional speech set data\YAF_disgust\YAF_pole_disgust.wav,disgust,disgust,True
+C:\Users\Marvel\Desktop\codes\collabs\speech-emotion-recognition\TESS Toronto emotional speech set data\TESS Toronto emotional speech set data\OAF_Sad\OAF_mill_sad.wav,sad,sad,True
+C:\Users\Marvel\Desktop\codes\collabs\speech-emotion-recognition\TESS Toronto emotional speech set data\TESS Toronto emotional speech set data\OAF_neutral\OAF_hole_neutral.wav,neutral,neutral,True
+C:\Users\Marvel\Desktop\codes\collabs\speech-emotion-recognition\TESS Toronto emotional speech set data\TESS Toronto emotional speech set data\OAF_Fear\OAF_jug_fear.wav,fear,fear,True
+C:\Users\Marvel\Desktop\codes\collabs\speech-emotion-recognition\TESS Toronto emotional speech set data\TESS Toronto emotional speech set data\OAF_Fear\OAF_keen_fear.wav,fear,fear,True
+C:\Users\Marvel\Desktop\codes\collabs\speech-emotion-recognition\TESS Toronto emotional speech set data\TESS Toronto emotional speech set data\OAF_happy\OAF_team_happy.wav,happy,happy,True
+C:\Users\Marvel\Desktop\codes\collabs\speech-emotion-recognition\TESS Toronto emotional speech set data\OAF_Pleasant_surprise\OAF_room_ps.wav,ps,ps,True
+C:\Users\Marvel\Desktop\codes\collabs\speech-emotion-recognition\TESS Toronto emotional speech set data\OAF_disgust\OAF_pole_disgust.wav,disgust,disgust,True
+C:\Users\Marvel\Desktop\codes\collabs\speech-emotion-recognition\TESS Toronto emotional speech set data\OAF_disgust\OAF_nag_disgust.wav,disgust,disgust,True
+C:\Users\Marvel\Desktop\codes\collabs\speech-emotion-recognition\TESS Toronto emotional speech set data\YAF_pleasant_surprised\YAF_doll_ps.wav,ps,disgust,False
+C:\Users\Marvel\Desktop\codes\collabs\speech-emotion-recognition\TESS Toronto emotional speech set data\TESS Toronto emotional speech set data\OAF_neutral\OAF_turn_neutral.wav,neutral,neutral,True
+C:\Users\Marvel\Desktop\codes\collabs\speech-emotion-recognition\TESS Toronto emotional speech set data\TESS Toronto emotional speech set data\OAF_happy\OAF_limb_happy.wav,happy,happy,True
+C:\Users\Marvel\Desktop\codes\collabs\speech-emotion-recognition\TESS Toronto emotional speech set data\TESS Toronto emotional speech set data\OAF_Pleasant_surprise\OAF_bath_ps.wav,ps,ps,True
+C:\Users\Marvel\Desktop\codes\collabs\speech-emotion-recognition\TESS Toronto emotional speech set data\TESS Toronto emotional speech set data\OAF_neutral\OAF_bath_neutral.wav,neutral,neutral,True
+C:\Users\Marvel\Desktop\codes\collabs\speech-emotion-recognition\TESS Toronto emotional speech set data\TESS Toronto emotional speech set data\YAF_angry\YAF_shout_angry.wav,angry,angry,True
+C:\Users\Marvel\Desktop\codes\collabs\speech-emotion-recognition\TESS Toronto emotional speech set data\OAF_angry\OAF_third_angry.wav,angry,angry,True
+C:\Users\Marvel\Desktop\codes\collabs\speech-emotion-recognition\TESS Toronto emotional speech set data\TESS Toronto emotional speech set data\OAF_disgust\OAF_ditch_disgust.wav,disgust,disgust,True
+C:\Users\Marvel\Desktop\codes\collabs\speech-emotion-recognition\TESS Toronto emotional speech set data\TESS Toronto emotional speech set data\OAF_Sad\OAF_life_sad.wav,sad,sad,True
+C:\Users\Marvel\Desktop\codes\collabs\speech-emotion-recognition\TESS Toronto emotional speech set data\OAF_Fear\OAF_loaf_fear.wav,fear,fear,True
+C:\Users\Marvel\Desktop\codes\collabs\speech-emotion-recognition\TESS Toronto emotional speech set data\YAF_sad\YAF_near_sad.wav,sad,sad,True

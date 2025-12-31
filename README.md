@@ -1,9 +1,30 @@
-# Speech Emotion Recognition - Sound Classification
+# LSTM-Based Speech Emotion Recognition for Student Public Speaking Training
 
-This project implements a speech emotion recognition pipeline on the
-TESS dataset. It builds MFCC features from raw WAV audio, trains an LSTM-based
-classifier to predict seven emotions, and visualizes both the audio signals
-and training curves. 
+This project builds an emotion-aware feedback system for student public speaking
+training. It extracts MFCC features from speech audio, trains an LSTM-based
+classifier to recognize seven emotions, and delivers live emotion feedback in a
+web interface to support delivery stability and emotional control.
+
+## Research scope
+
+The system targets student public speaking practice sessions and provides
+emotion cues (e.g., fear, sadness, anger, neutrality) as a proxy for delivery
+stability and confidence trends during rehearsal.
+
+## Research objective
+
+Design and evaluate an LSTM-based speech emotion recognition pipeline that
+provides real-time emotion feedback for student public speaking training, with
+quantitative evaluation of classification performance and qualitative analysis
+of delivery stability cues.
+
+## Research contributions
+
+- A reproducible MFCC + LSTM pipeline for speech emotion recognition on TESS.
+- A live web application that captures microphone audio and displays emotion
+  confidence scores for rehearsal feedback.
+- An evaluation workflow that produces publication-ready metrics tables and
+  visualizations (confusion matrix, ROC, PR curves, and accuracy/loss plots).
 
 ## Setup (Windows, Python 3.12)
 
@@ -27,13 +48,13 @@ TensorFlow 2.16 on Windows requires `numpy<2.0`. This is pinned in
 Train the model (required once):
 
 ```bash
-python train_model.py --data-dir "C:\Users\Marvel\Desktop\codes\collabs\speech-emotion-recognition\TESS Toronto emotional speech set data"
+python train_model.py --data-dir "C:\Users\...\speech-emotion-recognition\TESS Toronto emotional speech set data"
 ```
 
 Or auto-detect the dataset:
 
 ```bash
-python train_model_auto.py --root "C:\Users\Marvel\Desktop\codes\collabs\speech-emotion-recognition"
+python train_model_auto.py --root "C:\Users\...\speech-emotion-recognition"
 ```
 
 Run the web app:
@@ -53,24 +74,25 @@ streaming" for continuous updates while recording.
 4) Use TensorFlow Keras imports (`from tensorflow.keras ...`)
 5) Run cells top to bottom
 
-### Dataset path (local machine)
+### Dataset location
 
-The tutorial code uses `/kaggle/input` which only exists on Kaggle. On your
-machine, point to the local dataset folder.
-
-Example:
-
-```python
-for dirname, _, filenames in os.walk(
-    r"C:\Users\Marvel\Desktop\codes\collabs\speech-emotion-recognition\TESS Toronto emotional speech set data"
-):
-    ...
-```
+The TESS dataset is downloaded and stored in the project root. The expected
+folder name is `TESS Toronto emotional speech set data`.
 
 ## Expected results
 
 The baseline LSTM model in the notebook typically reaches around 65-72%
 validation accuracy depending on random seed and environment.
+
+## Evaluation (figures + tables)
+
+Generate paper-ready plots and metrics:
+
+```bash
+python evaluate_model.py --data-dir "C:\Users\...\speech-emotion-recognition\TESS Toronto emotional speech set data"
+```
+
+Artifacts are saved under `results/`.
 
 ## Deployment
 
@@ -84,6 +106,7 @@ Vercel is optimized for frontend/serverless and is not a good fit for a
 stateful FastAPI model service.
 
 For a full process/flow explanation, see `LIVE_APP_FLOW.md`.
+Render steps live in `DEPLOYMENT.md`.
 
 
 ## Dataset Information

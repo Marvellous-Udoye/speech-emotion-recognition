@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Live Speech Emotion Recognition</title>
+    <title>SpeechCoach</title>
     <link rel="stylesheet" href="/static/styles.css" />
     <link
       href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap"
@@ -11,60 +11,274 @@
     />
   </head>
   <body>
-    <main class="page">
-      <header class="hero">
-        <p class="tag">Live Demo</p>
-        <h1>Emotion-Aware Speech Capture</h1>
-        <p class="subtitle">
-          Record a short clip and get an emotion prediction from your trained
-          model.
-        </p>
-      </header>
+    <main>
+      <section class="hero">
+        <div class="container hero__content">
+          <div class="hero__text">
+            <h1>The voice platform for student public speaking training</h1>
+            <p class="subtitle">
+              Practice speeches, track emotional stability, and receive
+              confidence feedback in real time.
+            </p>
+            <div class="hero__actions">
+              <button id="startCta" class="btn btn--primary">
+                Start Speaking
+              </button>
+            </div>
+          </div>
+          <div class="hero__media">
+            <img src="/static/images/hero.jpg" alt="Platform preview" />
+          </div>
+        </div>
+      </section>
 
-      <section class="panel">
-        <div class="panel__left">
-          <div class="meter">
-            <div class="meter__ring"></div>
-            <div class="meter__core">
-              <span id="emotionLabel">—</span>
-              <small id="emotionConfidence">Waiting for audio</small>
+      <section id="about" class="section about">
+        <div class="container about__grid">
+          <div class="about__images">
+            <img src="/static/images/about-1.jpg" alt="Student speaker" />
+            <img src="/static/images/about-2.jpg" alt="Practice session" />
+          </div>
+          <div class="about__text">
+            <h2>About the platform</h2>
+            <p class="lead">
+              Build calm, confident delivery with emotion-aware coaching.
+            </p>
+            <p class="muted">
+              SpeechCoach helps students rehearse presentations and receive
+              instant emotional feedback using a trained LSTM model on speech
+              features.
+            </p>
+            <button class="btn btn--primary">Explore</button>
+          </div>
+        </div>
+      </section>
+
+      <section id="profileSection" class="section demo demo--hidden">
+        <div class="container">
+          <div class="demo__header">
+            <h2>Session access</h2>
+            <p class="muted">Access is required before recording can begin.</p>
+          </div>
+          <form id="profileForm" class="profile">
+            <div class="profile__group">
+              <label>Language</label>
+              <div class="chip-grid">
+                <button
+                  type="button"
+                  class="chip chip--active"
+                  data-group="lang"
+                >
+                  English
+                </button>
+                <button type="button" class="chip" data-group="lang">
+                  Hindi
+                </button>
+                <button type="button" class="chip" data-group="lang">
+                  Arabic
+                </button>
+                <button type="button" class="chip" data-group="lang">
+                  Spanish
+                </button>
+              </div>
+            </div>
+            <div class="profile__group">
+              <label>Age group</label>
+              <div class="chip-grid">
+                <button
+                  type="button"
+                  class="chip chip--active"
+                  data-group="age"
+                >
+                  18-22
+                </button>
+                <button type="button" class="chip" data-group="age">
+                  23-27
+                </button>
+                <button type="button" class="chip" data-group="age">
+                  28-34
+                </button>
+                <button type="button" class="chip" data-group="age">35+</button>
+              </div>
+            </div>
+            <div class="profile__group">
+              <label>Gender</label>
+              <div class="chip-grid">
+                <button
+                  type="button"
+                  class="chip chip--active"
+                  data-group="gender"
+                >
+                  Male
+                </button>
+                <button type="button" class="chip" data-group="gender">
+                  Female
+                </button>
+              </div>
+            </div>
+            <p id="profileError" class="profile__error"></p>
+            <div class="profile__actions">
+              <button type="reset" class="btn btn--ghost">Reset</button>
+              <button type="submit" class="btn btn--primary">
+                Start Session
+              </button>
+            </div>
+          </form>
+        </div>
+      </section>
+
+      <section id="recordSection" class="section demo demo--hidden">
+        <div class="container panel">
+          <div class="panel__left">
+            <div class="meter">
+              <canvas id="confidenceChart" width="240" height="240"></canvas>
+              <div class="meter__core">
+                <span id="emotionLabel">-</span>
+                <small id="emotionConfidence">Waiting for audio</small>
+              </div>
+            </div>
+            <div class="bar-chart">
+              <h3>Emotion distribution</h3>
+              <canvas id="scoresChart"></canvas>
+            </div>
+          </div>
+          <div class="panel__right">
+            <div class="control-card">
+              <div class="controls">
+                <button id="recordBtn" class="btn btn--primary">
+                  Start Recording
+                </button>
+                <button id="resetBtn" class="btn btn--ghost" disabled>
+                  Reset
+                </button>
+                <label class="toggle">
+                  <input type="checkbox" id="liveToggle" />
+                  <span class="toggle__track"></span>
+                  <span class="toggle__label">Live streaming</span>
+                </label>
+              </div>
+              <p id="status" class="status muted">Ready for a new recording.</p>
+            </div>
+            <div class="scores">
+              <h3>Emotion Scores</h3>
+              <div id="scoreList" class="scores__list"></div>
             </div>
           </div>
         </div>
-        <div class="panel__right">
-          <div class="controls">
-            <button id="recordBtn" class="btn btn--primary">
-              Start Recording
-            </button>
-            <button id="resetBtn" class="btn btn--ghost" disabled>
-              Reset
-            </button>
-            <label class="toggle">
-              <input type="checkbox" id="liveToggle" />
-              <span class="toggle__track"></span>
-              <span class="toggle__label">Live streaming</span>
-            </label>
-          </div>
-          <p id="status" class="status">
-            Tap “Start Recording” and speak for 3–5 seconds.
+      </section>
+
+      <section id="how" class="section how">
+        <div class="container">
+          <h2>How it works</h2>
+          <p class="muted">
+            A simple, integrated flow that turns practice into measurable
+            insight.
           </p>
-          <div class="scores">
-            <h3>Emotion Scores</h3>
-            <div id="scoreList" class="scores__list"></div>
+          <div class="how__grid">
+            <div class="how__card">
+              <div class="how__icon">1</div>
+              <h3>Capture speech</h3>
+              <p>Record 3-5 seconds of speech in the browser.</p>
+            </div>
+            <div class="how__card">
+              <div class="how__icon">2</div>
+              <h3>Analyze emotion</h3>
+              <p>MFCC features drive an LSTM emotion classifier.</p>
+            </div>
+            <div class="how__card">
+              <div class="how__icon">3</div>
+              <h3>Review results</h3>
+              <p>Confidence ratios and emotion scores guide delivery.</p>
+            </div>
           </div>
         </div>
       </section>
 
-      <section class="notes">
-        <h2>How it works</h2>
-        <ol>
-          <li>Microphone audio is captured in-browser.</li>
-          <li>Audio is encoded to WAV and sent to the API.</li>
-          <li>The backend extracts MFCC features and runs the LSTM model.</li>
-        </ol>
+      <section id="why" class="section why">
+        <div class="container">
+          <h2>Why teams choose SpeechCoach</h2>
+          <p class="muted">
+            It is more than practice. It is emotion intelligence for speakers.
+          </p>
+          <div class="why__grid">
+            <article class="why__card">
+              <img src="/static/images/why-choose-1.jpg" alt="Emotion insights" />
+              <h3>Emotion insights</h3>
+              <p>Track live emotions and stability trends while rehearsing.</p>
+            </article>
+            <article class="why__card">
+              <img src="/static/images/why-choose-2.jpg" alt="Confidence cues" />
+              <h3>Confidence cues</h3>
+              <p>Review confidence ratios and improve delivery control.</p>
+            </article>
+            <article class="why__card">
+              <img src="/static/images/why-choose-3.jpg" alt="Practice loops" />
+              <h3>Practice loops</h3>
+              <p>Repeat short sessions and observe emotion shifts.</p>
+            </article>
+            <article class="why__card">
+              <img src="/static/images/why-choose-4.jpg" alt="Cohort insights" />
+              <h3>Cohort insights</h3>
+              <p>Collect speaker context for cohort comparisons.</p>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section id="forwho" class="section forwho">
+        <div class="container">
+          <h2>Who is it for?</h2>
+          <p class="muted">
+            Built for students, coaches, and leadership programs.
+          </p>
+          <div class="forwho__grid">
+            <div class="forwho__card">
+              <img src="/static/images/user-1.jpg" alt="Student presenters" />
+              <p>Student presenters preparing for defenses and pitches.</p>
+            </div>
+            <div class="forwho__card">
+              <img src="/static/images/user-3.jpg" alt="Leadership cohorts" />
+              <p>Leadership cohorts building steady delivery.</p>
+            </div>
+            <div class="forwho__card">
+              <img src="/static/images/user-2.jpg" alt="Speech coaches" />
+              <p>Speech coaches who need measurable emotion insights.</p>
+            </div>
+            <div class="forwho__card">
+              <img src="/static/images/user-4.jpg" alt="Departments" />
+              <p>Departments tracking communication readiness.</p>
+            </div>
+          </div>
+        </div>
       </section>
     </main>
 
+    <footer class="footer">
+      <div class="container footer__inner">
+        <div>
+          <h3>SpeechCoach</h3>
+          <p class="muted">
+            Emotion-aware feedback for student public speaking training.
+          </p>
+        </div>
+        <div class="footer__links">
+          <a href="#about">About</a>
+          <a href="#how">How It Works</a>
+          <a href="#why">Why Us</a>
+          <a href="#forwho">Who It's For</a>
+        </div>
+      </div>
+    </footer>
+
+    <div id="analysisModal" class="modal">
+      <div class="modal__content">
+        <div class="modal__icon"></div>
+        <h3>Analysing speech...</h3>
+        <p>Please wait while your audio is being processed.</p>
+        <button id="cancelAnalysis" class="btn btn--ghost">Cancel</button>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
     <script src="/static/app.js"></script>
   </body>
 </html>

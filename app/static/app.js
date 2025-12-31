@@ -1,3 +1,8 @@
+const startCta = document.getElementById("startCta");
+const profileSection = document.getElementById("profileSection");
+const profileForm = document.getElementById("profileForm");
+const profileError = document.getElementById("profileError");
+const recordSection = document.getElementById("recordSection");
 const recordBtn = document.getElementById("recordBtn");
 const resetBtn = document.getElementById("resetBtn");
 const statusEl = document.getElementById("status");
@@ -5,6 +10,10 @@ const labelEl = document.getElementById("emotionLabel");
 const confidenceEl = document.getElementById("emotionConfidence");
 const scoreList = document.getElementById("scoreList");
 const liveToggle = document.getElementById("liveToggle");
+const confidenceCanvas = document.getElementById("confidenceChart");
+const scoresCanvas = document.getElementById("scoresChart");
+const modal = document.getElementById("analysisModal");
+const cancelAnalysis = document.getElementById("cancelAnalysis");
 
 let audioCtx;
 let mediaStream;
@@ -15,6 +24,18 @@ let isRecording = false;
 let bufferLength = 0;
 let lastSentAt = 0;
 let isSending = false;
+let confidenceChart;
+let scoresChart;
+let profileData = {};
+const DEFAULT_LABELS = [
+  "angry",
+  "disgust",
+  "fear",
+  "happy",
+  "neutral",
+  "ps",
+  "sad",
+];
 
 const WINDOW_SEC = 3;
 const MIN_SEND_INTERVAL_MS = 1500;
@@ -23,10 +44,86 @@ const setStatus = (text) => {
   statusEl.textContent = text;
 };
 
+const showModal = () => modal.classList.add("modal--visible");
+const hideModal = () => modal.classList.remove("modal--visible");
+
 const resetUI = () => {
-  labelEl.textContent = "—";
+  labelEl.textContent = "-";
   confidenceEl.textContent = "Waiting for audio";
   scoreList.innerHTML = "";
+  DEFAULT_LABELS.forEach((label) => {
+    const row = document.createElement("div");
+    row.className = "score";
+    row.innerHTML = `<strong>${label}</strong><span>0.0%</span>`;
+    scoreList.appendChild(row);
+  });
+  updateChart(0);
+  setStatus("Ready for a new recording.");
+};
+
+const initChart = () => {
+  if (!window.Chart || !confidenceCanvas) {
+    return;
+  }
+
+  confidenceChart = new Chart(confidenceCanvas, {
+    type: "doughnut",
+    data: {
+      labels: ["Confidence", "Remaining"],
+      datasets: [
+        {
+          data: [0, 100],
+          backgroundColor: ["#111827", "#e5e7eb"],
+          borderWidth: 0,
+        },
+      ],
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: true,
+      cutout: "70%",
+      plugins: { legend: { display: false } },
+    },
+  });
+
+  if (scoresCanvas) {
+    scoresChart = new Chart(scoresCanvas, {
+      type: "bar",
+      data: {
+        labels: [],
+        datasets: [
+          {
+            label: "Score",
+            data: [],
+            backgroundColor: "#111827",
+            borderRadius: 6,
+          },
+        ],
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: { legend: { display: false } },
+        scales: {
+          x: { ticks: { color: "#6b7280" } },
+          y: { beginAtZero: true, max: 1, ticks: { color: "#6b7280" } },
+        },
+      },
+    });
+  }
+};
+
+const updateChart = (confidence) => {
+  if (!confidenceChart) return;
+  confidenceChart.data.datasets[0].data = [
+    Math.round(confidence * 100),
+    Math.round((1 - confidence) * 100),
+  ];
+  confidenceChart.data.datasets[0].backgroundColor = [
+    "#111827",
+    confidence === 0 ? "#e5e7eb" : "#f3f4f6",
+  ];
+  confidenceChart.update();
 };
 
 const startRecording = async () => {
@@ -66,7 +163,7 @@ const stopRecording = async () => {
 
   isRecording = false;
   recordBtn.textContent = "Start Recording";
-  setStatus("Uploading audio for prediction...");
+  setStatus("Analysing speech...");
 
   const samples = flattenBuffers(buffers);
   await sendPrediction(samples, audioCtx.sampleRate);
@@ -126,6 +223,7 @@ const sendPrediction = async (samples, sampleRate, isLive = false) => {
   const formData = new FormData();
   formData.append("file", blob, "recording.wav");
 
+  if (!isLive) showModal();
   try {
     const response = await fetch("/api/predict", {
       method: "POST",
@@ -136,6 +234,8 @@ const sendPrediction = async (samples, sampleRate, isLive = false) => {
     setStatus(isLive ? "Live prediction updated." : "Prediction complete.");
   } catch (error) {
     setStatus("Prediction failed. Check backend logs.");
+  } finally {
+    if (!isLive) hideModal();
   }
 };
 
@@ -191,7 +291,57 @@ const renderResult = (data) => {
     row.innerHTML = `<strong>${label}</strong><span>${(score * 100).toFixed(1)}%</span>`;
     scoreList.appendChild(row);
   });
+  updateChart(data.confidence);
+  if (scoresChart) {
+    scoresChart.data.labels = entries.map(([label]) => label);
+    scoresChart.data.datasets[0].data = entries.map(([, score]) => score);
+    scoresChart.update();
+  }
 };
+
+const selectChip = (event) => {
+  const button = event.target.closest(".chip");
+  if (!button) return;
+  const group = button.dataset.group;
+  document
+    .querySelectorAll(`.chip[data-group="${group}"]`)
+    .forEach((chip) => chip.classList.remove("chip--active"));
+  button.classList.add("chip--active");
+};
+
+const validateProfile = () => {
+  const lang = document.querySelector('.chip[data-group="lang"].chip--active')
+    ?.textContent;
+  const age = document.querySelector('.chip[data-group="age"].chip--active')
+    ?.textContent;
+  const gender = document.querySelector('.chip[data-group="gender"].chip--active')
+    ?.textContent;
+  if (!lang || !age || !gender) {
+    profileError.textContent =
+      "Please select language, age group, and gender to continue.";
+    return false;
+  }
+  profileError.textContent = "";
+  profileData = { lang, age, gender };
+  return true;
+};
+
+startCta.addEventListener("click", () => {
+  profileSection.classList.remove("demo--hidden");
+  profileSection.scrollIntoView({ behavior: "smooth" });
+});
+
+profileForm.addEventListener("click", selectChip);
+
+profileForm.addEventListener("submit", (event) => {
+  event.preventDefault();
+  if (!validateProfile()) {
+    return;
+  }
+  profileSection.style.display = "none";
+  recordSection.classList.remove("demo--hidden");
+  recordSection.scrollIntoView({ behavior: "smooth" });
+});
 
 recordBtn.addEventListener("click", () => {
   if (isRecording) {
@@ -203,7 +353,11 @@ recordBtn.addEventListener("click", () => {
 
 resetBtn.addEventListener("click", () => {
   resetUI();
-  setStatus("Ready for a new recording.");
 });
 
+cancelAnalysis.addEventListener("click", () => {
+  hideModal();
+});
+
+initChart();
 resetUI();

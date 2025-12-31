@@ -13,6 +13,8 @@ return an emotion prediction using the trained LSTM model.
 4) Backend loads the audio, extracts MFCC features, and runs the LSTM model.
 5) Backend returns emotion label + confidence + per-class scores.
 6) UI renders the prediction and score breakdown.
+   - Confidence doughnut chart
+   - Per-emotion bar chart
 
 Live streaming mode repeats steps 2-6 every few seconds while recording.
 
@@ -59,6 +61,7 @@ Training script uses the TESS dataset and matches the notebook pipeline:
 Key file:
 - `train_model.py`
 - `train_model_auto.py` (auto-detects dataset path)
+- `evaluate_model.py` (generates plots and tables)
 
 ## Runbook (Local)
 

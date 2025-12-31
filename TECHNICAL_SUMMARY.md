@@ -13,6 +13,8 @@
   a reusable training function.
 - Added deployment configs for Render and Railway.
 - Documented the end-to-end flow in `LIVE_APP_FLOW.md`.
+- Updated project scope to student public speaking training with emotion-aware
+  feedback for delivery stability cues.
 
 ## Notebook cell guide (by cell number)
 
@@ -61,7 +63,7 @@ Cell 30: Build and compile the LSTM model (stacked Dense + Dropout).
 
 Cell 31: Train the model with a validation split.
 
-Cell 32: Notes from the tutorial about best validation accuracy and next steps.
+Cell 32: Notes about best validation accuracy and next steps.
 
 Cell 34: Plot train/validation accuracy over epochs.
 
@@ -82,6 +84,7 @@ Behavior:
 - Sends audio via `multipart/form-data` to `/api/predict`.
 - Renders the top emotion label, confidence, and full score list.
 - Live streaming mode sends rolling 3s windows every ~1.5s while recording.
+- UI includes confidence doughnut and per-emotion bar charts for quick analysis.
 
 ### Backend (FastAPI)
 
@@ -112,3 +115,16 @@ Outputs:
 Files:
 - `render.yaml`: Render service definition.
 - `Procfile`: Generic process start command.
+
+## Evaluation artifacts
+
+Evaluation script:
+- `evaluate_model.py`
+
+Outputs (saved under `results/`):
+- `metrics.csv` and `metrics.md` (paper-ready tables)
+- `confusion_matrix.png`
+- `roc_curves.png`
+- `pr_curves.png`
+- `training_accuracy.png` and `training_loss.png` (if history available)
+- `sample_predictions.csv`
