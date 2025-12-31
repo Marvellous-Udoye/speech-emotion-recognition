@@ -1,0 +1,10 @@
+name: Keep Render Awake
+on:
+  schedule:
+    - cron: "*/15 * * * *"
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping Render
+        run: curl -s https://speech-emotion-recognition-9myh.onrender.com/api/health > /dev/null

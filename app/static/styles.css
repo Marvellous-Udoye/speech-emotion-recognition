@@ -290,6 +290,8 @@ h1 {
   height: 220px !important;
   aspect-ratio: 1 / 1;
   display: block;
+  background: #f3f4f6;
+  border-radius: 50%;
 }
 
 .meter__core {
@@ -308,13 +310,13 @@ h1 {
 
 .bar-chart {
   margin-top: 1.5rem;
-  width: min(440px, 100%);
+  width: min(460px, 100%);
   justify-self: center;
 }
 
 .bar-chart canvas {
   width: 100% !important;
-  height: 260px !important;
+  height: 300px !important;
   z-index: 20;
 }
 
@@ -341,6 +343,12 @@ h1 {
     object-fit: cover;
     border-radius: 32px 32px 0 0;
     border: 1px solid rgba(255, 255, 255, 0.7);
+  }
+
+  .about__images {
+    display: grid;
+    grid-template-columns: repeat(1, minmax(0, 1fr));
+    gap: 1rem;
   }
 
   .profile {
