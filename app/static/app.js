@@ -40,8 +40,9 @@ const DEFAULT_LABELS = [
 
 const WINDOW_SEC = 3;
 const MIN_SEND_INTERVAL_MS = 1500;
-const MAX_RECORD_MS = 4500;
+const MAX_RECORD_MS = 2500;
 const MIN_SAMPLES = 8000;
+const REQUEST_TIMEOUT_MS = 60000;
 
 const setStatus = (text) => {
   statusEl.textContent = text;
@@ -236,27 +237,27 @@ const maybeSendLive = async (sampleRate) => {
 const sendPrediction = async (samples, sampleRate, isLive = false) => {
   const wav = encodeWav(samples, sampleRate);
   const blob = new Blob([wav], { type: "audio/wav" });
-  const formData = new FormData();
-  formData.append("file", blob, "recording.wav");
 
   if (!isLive) showModal();
   try {
     const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 20000);
+    const timeout = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
     const response = await fetch("/api/predict", {
       method: "POST",
-      body: formData,
+      headers: { "Content-Type": "audio/wav" },
+      body: blob,
       signal: controller.signal,
     });
     clearTimeout(timeout);
     if (!response.ok) {
       const message = await response.text();
-      throw new Error(message || "Prediction failed");
+      throw new Error(message || `Prediction failed (${response.status})`);
     }
     const data = await response.json();
     renderResult(data);
     setStatus(isLive ? "Live prediction updated." : "Prediction complete.");
   } catch (error) {
+    console.error("[predict] request failed", error);
     setStatus("Prediction failed. Please try again.");
   } finally {
     if (!isLive) hideModal();

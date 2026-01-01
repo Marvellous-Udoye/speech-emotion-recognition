@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from fastapi import FastAPI, File, UploadFile
+from fastapi import FastAPI, Request
 from fastapi.responses import HTMLResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 
@@ -28,12 +28,25 @@ def health_check() -> dict:
 
 
 @app.post("/api/predict")
-async def predict(file: UploadFile = File(...)) -> JSONResponse:
+async def predict(request: Request) -> JSONResponse:
     if model is None:
         return JSONResponse({"error": "Model not loaded"}, status_code=500)
     try:
-        audio_bytes = await file.read()
-        print(f"[predict] bytes={len(audio_bytes)} name={file.filename}")
+        content_type = request.headers.get("content-type") or ""
+        audio_bytes = b""
+        name = "raw-body"
+        if content_type.startswith("multipart/form-data"):
+            form = await request.form()
+            upload = form.get("file")
+            if upload is None:
+                return JSONResponse({"error": "Missing file field"}, status_code=400)
+            audio_bytes = await upload.read()
+            name = getattr(upload, "filename", "uploaded-file")
+        else:
+            audio_bytes = await request.body()
+        print(
+            f"[predict] bytes={len(audio_bytes)} name={name} content_type={request.headers.get('content-type')}"
+        )
         if not audio_bytes:
             return JSONResponse({"error": "Empty audio upload"}, status_code=400)
         if len(audio_bytes) < 1024:
