@@ -249,15 +249,22 @@ const sendPrediction = async (samples, sampleRate, isLive = false) => {
   try {
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
+    const formData = new FormData();
+    formData.append("file", blob, "recording.wav");
     const response = await fetch("/api/predict", {
       method: "POST",
-      headers: { "Content-Type": "audio/wav" },
-      body: blob,
+      body: formData,
       signal: controller.signal,
     });
     clearTimeout(timeout);
     if (!response.ok) {
       const message = await response.text();
+      console.error(
+        "[predict] non-200 response",
+        response.status,
+        response.statusText,
+        message
+      );
       throw new Error(message || `Prediction failed (${response.status})`);
     }
     const data = await response.json();
