@@ -1,4 +1,5 @@
 from pathlib import Path
+import traceback
 
 from fastapi import FastAPI, Request
 from fastapi.responses import HTMLResponse, JSONResponse
@@ -55,6 +56,7 @@ async def predict(request: Request) -> JSONResponse:
         return JSONResponse(result)
     except Exception as exc:
         print(f"[predict] error: {exc}")
+        traceback.print_exc()
         return JSONResponse({"error": "Prediction failed"}, status_code=500)
 
 

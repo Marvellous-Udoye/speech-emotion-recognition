@@ -40,7 +40,7 @@ const DEFAULT_LABELS = [
 
 const WINDOW_SEC = 3;
 const MIN_SEND_INTERVAL_MS = 1500;
-const MAX_RECORD_MS = 2500;
+const MAX_RECORD_MS = 5000;
 const MIN_SAMPLES = 8000;
 const REQUEST_TIMEOUT_MS = 60000;
 
@@ -159,11 +159,13 @@ const startRecording = async () => {
   setStatus("Recording... speak clearly for a few seconds.");
 
   clearTimeout(autoStopTimer);
-  autoStopTimer = setTimeout(() => {
-    if (isRecording) {
-      stopRecording();
-    }
-  }, MAX_RECORD_MS);
+  if (!liveToggle.checked) {
+    autoStopTimer = setTimeout(() => {
+      if (isRecording) {
+        stopRecording();
+      }
+    }, MAX_RECORD_MS);
+  }
 };
 
 const stopRecording = async () => {
@@ -175,6 +177,11 @@ const stopRecording = async () => {
 
   isRecording = false;
   recordBtn.textContent = "Start Recording";
+  if (liveToggle.checked) {
+    setStatus("Live streaming stopped.");
+    resetBtn.disabled = false;
+    return;
+  }
   setStatus("Analysing speech...");
 
   const samples = flattenBuffers(buffers);
@@ -378,6 +385,22 @@ recordBtn.addEventListener("click", () => {
 
 resetBtn.addEventListener("click", () => {
   resetUI();
+});
+
+liveToggle.addEventListener("change", () => {
+  if (!isRecording) {
+    return;
+  }
+  clearTimeout(autoStopTimer);
+  if (!liveToggle.checked) {
+    autoStopTimer = setTimeout(() => {
+      if (isRecording) {
+        stopRecording();
+      }
+    }, MAX_RECORD_MS);
+  } else {
+    setStatus("Live streaming... updates will appear below.");
+  }
 });
 
 cancelAnalysis.addEventListener("click", () => {
