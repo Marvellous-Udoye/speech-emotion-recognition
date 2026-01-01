@@ -249,12 +249,16 @@ const sendPrediction = async (samples, sampleRate, isLive = false) => {
   try {
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
-    const formData = new FormData();
-    formData.append("file", blob, "recording.wav");
     const response = await fetch("/api/predict", {
       method: "POST",
-      body: formData,
+      headers: {
+        "Content-Type": "audio/wav",
+        "X-Upload-Name": "recording.wav",
+        "X-Upload-Source": isLive ? "live" : "recording",
+      },
+      body: blob,
       signal: controller.signal,
+      cache: "no-store",
     });
     clearTimeout(timeout);
     if (!response.ok) {

@@ -1,4 +1,5 @@
 from pathlib import Path
+import time
 import traceback
 
 from fastapi import FastAPI, Request
@@ -20,7 +21,27 @@ def _load_model() -> None:
         model = EmotionModel()
     except FileNotFoundError as exc:
         model = None
-        print(f"[startup] {exc}")
+        print(f"[startup] {exc}", flush=True)
+
+
+@app.middleware("http")
+async def log_requests(request: Request, call_next):
+    start = time.time()
+    content_type = request.headers.get("content-type")
+    content_length = request.headers.get("content-length")
+    client = request.client
+    client_addr = f"{client.host}:{client.port}" if client else "unknown"
+    print(
+        f"[request] {request.method} {request.url.path} ct={content_type} len={content_length} client={client_addr}",
+        flush=True,
+    )
+    response = await call_next(request)
+    elapsed_ms = int((time.time() - start) * 1000)
+    print(
+        f"[request] {request.method} {request.url.path} status={response.status_code} elapsed_ms={elapsed_ms}",
+        flush=True,
+    )
+    return response
 
 
 @app.get("/api/health")
@@ -35,8 +56,9 @@ async def predict(request: Request) -> JSONResponse:
     try:
         content_type = request.headers.get("content-type") or ""
         audio_bytes = b""
-        name = "raw-body"
+        name = request.headers.get("x-upload-name", "raw-body")
         if content_type.startswith("multipart/form-data"):
+            print("[predict] parsing multipart form", flush=True)
             form = await request.form()
             upload = form.get("file")
             if upload is None:
@@ -44,9 +66,11 @@ async def predict(request: Request) -> JSONResponse:
             audio_bytes = await upload.read()
             name = getattr(upload, "filename", "uploaded-file")
         else:
+            print("[predict] reading raw body", flush=True)
             audio_bytes = await request.body()
         print(
-            f"[predict] bytes={len(audio_bytes)} name={name} content_type={request.headers.get('content-type')}"
+            f"[predict] bytes={len(audio_bytes)} name={name} content_type={request.headers.get('content-type')}",
+            flush=True,
         )
         if not audio_bytes:
             return JSONResponse({"error": "Empty audio upload"}, status_code=400)
@@ -55,7 +79,7 @@ async def predict(request: Request) -> JSONResponse:
         result = model.predict(audio_bytes)
         return JSONResponse(result)
     except Exception as exc:
-        print(f"[predict] error: {exc}")
+        print(f"[predict] error: {exc}", flush=True)
         traceback.print_exc()
         return JSONResponse({"error": "Prediction failed"}, status_code=500)
 
