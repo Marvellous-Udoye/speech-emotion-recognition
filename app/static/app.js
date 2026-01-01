@@ -249,11 +249,15 @@ const sendPrediction = async (samples, sampleRate, isLive = false) => {
       signal: controller.signal,
     });
     clearTimeout(timeout);
+    if (!response.ok) {
+      const message = await response.text();
+      throw new Error(message || "Prediction failed");
+    }
     const data = await response.json();
     renderResult(data);
     setStatus(isLive ? "Live prediction updated." : "Prediction complete.");
   } catch (error) {
-    setStatus("Prediction timed out or failed. Please try again.");
+    setStatus("Prediction failed. Please try again.");
   } finally {
     if (!isLive) hideModal();
   }

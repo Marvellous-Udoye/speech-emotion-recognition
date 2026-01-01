@@ -31,13 +31,18 @@ def health_check() -> dict:
 async def predict(file: UploadFile = File(...)) -> JSONResponse:
     if model is None:
         return JSONResponse({"error": "Model not loaded"}, status_code=500)
-    audio_bytes = await file.read()
-    if not audio_bytes:
-        return JSONResponse({"error": "Empty audio upload"}, status_code=400)
-    if len(audio_bytes) < 1024:
-        return JSONResponse({"error": "Audio clip too short"}, status_code=400)
-    result = model.predict(audio_bytes)
-    return JSONResponse(result)
+    try:
+        audio_bytes = await file.read()
+        print(f"[predict] bytes={len(audio_bytes)} name={file.filename}")
+        if not audio_bytes:
+            return JSONResponse({"error": "Empty audio upload"}, status_code=400)
+        if len(audio_bytes) < 1024:
+            return JSONResponse({"error": "Audio clip too short"}, status_code=400)
+        result = model.predict(audio_bytes)
+        return JSONResponse(result)
+    except Exception as exc:
+        print(f"[predict] error: {exc}")
+        return JSONResponse({"error": "Prediction failed"}, status_code=500)
 
 
 @app.get("/", response_class=HTMLResponse)
