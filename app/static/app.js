@@ -27,6 +27,7 @@ let isSending = false;
 let confidenceChart;
 let scoresChart;
 let profileData = {};
+let autoStopTimer;
 const DEFAULT_LABELS = [
   "angry",
   "disgust",
@@ -39,6 +40,8 @@ const DEFAULT_LABELS = [
 
 const WINDOW_SEC = 3;
 const MIN_SEND_INTERVAL_MS = 1500;
+const MAX_RECORD_MS = 4500;
+const MIN_SAMPLES = 8000;
 
 const setStatus = (text) => {
   statusEl.textContent = text;
@@ -153,9 +156,17 @@ const startRecording = async () => {
   recordBtn.textContent = "Stop Recording";
   resetBtn.disabled = true;
   setStatus("Recording... speak clearly for a few seconds.");
+
+  clearTimeout(autoStopTimer);
+  autoStopTimer = setTimeout(() => {
+    if (isRecording) {
+      stopRecording();
+    }
+  }, MAX_RECORD_MS);
 };
 
 const stopRecording = async () => {
+  clearTimeout(autoStopTimer);
   processorNode.disconnect();
   sourceNode.disconnect();
   mediaStream.getTracks().forEach((track) => track.stop());
@@ -166,6 +177,11 @@ const stopRecording = async () => {
   setStatus("Analysing speech...");
 
   const samples = flattenBuffers(buffers);
+  if (samples.length < MIN_SAMPLES) {
+    setStatus("Recording too short. Please try again.");
+    resetBtn.disabled = false;
+    return;
+  }
   await sendPrediction(samples, audioCtx.sampleRate);
   resetBtn.disabled = false;
 };
@@ -225,15 +241,19 @@ const sendPrediction = async (samples, sampleRate, isLive = false) => {
 
   if (!isLive) showModal();
   try {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 20000);
     const response = await fetch("/api/predict", {
       method: "POST",
       body: formData,
+      signal: controller.signal,
     });
+    clearTimeout(timeout);
     const data = await response.json();
     renderResult(data);
     setStatus(isLive ? "Live prediction updated." : "Prediction complete.");
   } catch (error) {
-    setStatus("Prediction failed. Check backend logs.");
+    setStatus("Prediction timed out or failed. Please try again.");
   } finally {
     if (!isLive) hideModal();
   }
