@@ -94,21 +94,6 @@ python evaluate_model.py --data-dir "C:\Users\...\speech-emotion-recognition\TES
 
 Artifacts are saved under `results/`.
 
-## Deployment
-
-Recommended: deploy the FastAPI app to Render or Railway.
-
-- Render: create a Web Service from this repo, set the build command to
-  `pip install -r requirements.txt`, start command `uvicorn app.main:app --host 0.0.0.0 --port 8000`.
-- Railway: similar setup with the same start command.
-
-Vercel is optimized for frontend/serverless and is not a good fit for a
-stateful FastAPI model service.
-
-For a full process/flow explanation, see `LIVE_APP_FLOW.md`.
-Render steps live in `DEPLOYMENT.md`.
-
-
 ## Dataset Information
 
 There are a set of 200 target words were spoken in the carrier phrase "Say the word _' by two actresses (aged 26 and 64 years) and recordings were made of the set portraying each of seven emotions (anger, disgust, fear, happiness, pleasant surprise, sadness, and neutral). There are 2800 data points (audio files) in total.

@@ -38,11 +38,11 @@ const DEFAULT_LABELS = [
   "sad",
 ];
 
-const WINDOW_SEC = 3;
+const WINDOW_SEC = 1;
 const MIN_SEND_INTERVAL_MS = 1500;
 const MAX_RECORD_MS = 5000;
 const MIN_SAMPLES = 8000;
-const REQUEST_TIMEOUT_MS = 60000;
+const REQUEST_TIMEOUT_MS = 90000;
 
 const setStatus = (text) => {
   statusEl.textContent = text;
