@@ -117,12 +117,22 @@ const initChart = () => {
   }
 };
 
+const formatPercent = (value) => {
+  const percent = value * 100;
+  if (percent === 0) {
+    return "0.0%";
+  }
+  if (percent > 0 && percent < 0.1) {
+    return "<0.1%";
+  }
+  return `${percent.toFixed(1)}%`;
+};
+
 const updateChart = (confidence) => {
   if (!confidenceChart) return;
-  confidenceChart.data.datasets[0].data = [
-    Math.round(confidence * 100),
-    Math.round((1 - confidence) * 100),
-  ];
+  const confidencePct = Math.min(100, Math.max(0, confidence * 100));
+  const remainingPct = Math.max(0, 100 - confidencePct);
+  confidenceChart.data.datasets[0].data = [confidencePct, remainingPct];
   confidenceChart.data.datasets[0].backgroundColor = [
     "#111827",
     confidence === 0 ? "#e5e7eb" : "#f3f4f6",
@@ -324,14 +334,18 @@ const renderResult = (data) => {
     return;
   }
   labelEl.textContent = data.label;
-  confidenceEl.textContent = `${(data.confidence * 100).toFixed(1)}% confidence`;
+  confidenceEl.textContent = `${(data.confidence * 100).toFixed(
+    2
+  )}% confidence`;
 
   const entries = Object.entries(data.scores || {}).sort((a, b) => b[1] - a[1]);
   scoreList.innerHTML = "";
   entries.forEach(([label, score]) => {
     const row = document.createElement("div");
     row.className = "score";
-    row.innerHTML = `<strong>${label}</strong><span>${(score * 100).toFixed(1)}%</span>`;
+    row.innerHTML = `<strong>${label}</strong><span>${formatPercent(
+      score
+    )}</span>`;
     scoreList.appendChild(row);
   });
   updateChart(data.confidence);
