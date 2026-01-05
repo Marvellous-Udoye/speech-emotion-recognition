@@ -19,13 +19,18 @@ def _fix_length(y: np.ndarray, sr: int) -> np.ndarray:
 
 
 def load_audio_bytes(data: bytes) -> Tuple[np.ndarray, int]:
+    print(f"[audio] bytes={len(data)} target_sr={TARGET_SR}", flush=True)
     with io.BytesIO(data) as bio:
         y, sr = librosa.load(bio, sr=TARGET_SR, mono=True)
-    return _fix_length(y, sr), sr
+    print(f"[audio] raw_shape={y.shape} sr={sr}", flush=True)
+    y = _fix_length(y, sr)
+    print(f"[audio] fixed_shape={y.shape}", flush=True)
+    return y, sr
 
 
 def extract_mfcc_from_audio(y: np.ndarray, sr: int) -> np.ndarray:
     mfcc = librosa.feature.mfcc(y=y, sr=sr, n_mfcc=N_MFCC)
+    print(f"[audio] mfcc_shape={mfcc.shape}", flush=True)
     return np.mean(mfcc.T, axis=0)
 
 
