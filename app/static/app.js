@@ -367,19 +367,47 @@ const selectChip = (event) => {
 };
 
 const validateProfile = () => {
-  const lang = document.querySelector('.chip[data-group="lang"].chip--active')
-    ?.textContent;
   const age = document.querySelector('.chip[data-group="age"].chip--active')
     ?.textContent;
   const gender = document.querySelector('.chip[data-group="gender"].chip--active')
     ?.textContent;
-  if (!lang || !age || !gender) {
+  const institution = document.querySelector(
+    '.chip[data-group="institution"].chip--active'
+  )?.textContent;
+  const level = document.querySelector('.chip[data-group="level"].chip--active')
+    ?.textContent;
+  const faculty = document.querySelector(
+    '.chip[data-group="faculty"].chip--active'
+  )?.textContent;
+  const presentation = document.querySelector(
+    '.chip[data-group="presentation"].chip--active'
+  )?.textContent;
+  const experience = document.querySelector(
+    '.chip[data-group="experience"].chip--active'
+  )?.textContent;
+  if (
+    !age ||
+    !gender ||
+    !institution ||
+    !level ||
+    !faculty ||
+    !presentation ||
+    !experience
+  ) {
     profileError.textContent =
-      "Please select language, age group, and gender to continue.";
+      "Please select all profile fields to continue.";
     return false;
   }
   profileError.textContent = "";
-  profileData = { lang, age, gender };
+  profileData = {
+    age,
+    gender,
+    institution,
+    level,
+    faculty,
+    presentation,
+    experience,
+  };
   return true;
 };
 
