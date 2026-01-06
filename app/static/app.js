@@ -27,6 +27,7 @@ let isSending = false;
 let confidenceChart;
 let scoresChart;
 let profileData = {};
+let currentSession = null;
 let autoStopTimer;
 const DEFAULT_LABELS = [
   "angry",
@@ -43,6 +44,9 @@ const MIN_SEND_INTERVAL_MS = 1500;
 const MAX_RECORD_MS = 5000;
 const MIN_SAMPLES = 8000;
 const REQUEST_TIMEOUT_MS = 90000;
+const SESSION_DB = "ser_sessions";
+const SESSION_STORE = "sessions";
+const SESSION_KEY = "current";
 
 const setStatus = (text) => {
   statusEl.textContent = text;
@@ -50,6 +54,79 @@ const setStatus = (text) => {
 
 const showModal = () => modal.classList.add("modal--visible");
 const hideModal = () => modal.classList.remove("modal--visible");
+
+const openSessionDb = () =>
+  new Promise((resolve, reject) => {
+    const request = indexedDB.open(SESSION_DB, 1);
+    request.onupgradeneeded = () => {
+      const db = request.result;
+      if (!db.objectStoreNames.contains(SESSION_STORE)) {
+        db.createObjectStore(SESSION_STORE);
+      }
+    };
+    request.onsuccess = () => resolve(request.result);
+    request.onerror = () => reject(request.error);
+  });
+
+const getStoredSession = async () => {
+  const db = await openSessionDb();
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction(SESSION_STORE, "readonly");
+    const store = tx.objectStore(SESSION_STORE);
+    const request = store.get(SESSION_KEY);
+    request.onsuccess = () => resolve(request.result || null);
+    request.onerror = () => reject(request.error);
+  });
+};
+
+const storeSession = async (session) => {
+  const db = await openSessionDb();
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction(SESSION_STORE, "readwrite");
+    const store = tx.objectStore(SESSION_STORE);
+    const request = store.put(session, SESSION_KEY);
+    request.onsuccess = () => resolve(true);
+    request.onerror = () => reject(request.error);
+  });
+};
+
+const generateDeviceId = () => {
+  if (window.crypto && window.crypto.randomUUID) {
+    return window.crypto.randomUUID();
+  }
+  const random = Math.random().toString(16).slice(2);
+  return `device_${Date.now()}_${random}`;
+};
+
+const postSession = async (session) => {
+  const response = await fetch("/api/session", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(session),
+  });
+  if (!response.ok) {
+    const message = await response.text();
+    throw new Error(message || "Failed to save session.");
+  }
+};
+
+const applySessionState = (session) => {
+  currentSession = session;
+  profileData = session?.profile || {};
+  profileSection.style.display = "none";
+  recordSection.classList.remove("demo--hidden");
+};
+
+const hydrateSession = async () => {
+  try {
+    const stored = await getStoredSession();
+    if (stored) {
+      applySessionState(stored);
+    }
+  } catch (error) {
+    console.error("[session] load failed", error);
+  }
+};
 
 const resetUI = () => {
   labelEl.textContent = "-";
@@ -259,17 +336,18 @@ const sendPrediction = async (samples, sampleRate, isLive = false) => {
   try {
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
-    const response = await fetch("/api/predict", {
-      method: "POST",
-      headers: {
-        "Content-Type": "audio/wav",
-        "X-Upload-Name": "recording.wav",
-        "X-Upload-Source": isLive ? "live" : "recording",
-      },
-      body: blob,
-      signal: controller.signal,
-      cache: "no-store",
-    });
+  const response = await fetch("/api/predict", {
+    method: "POST",
+    headers: {
+      "Content-Type": "audio/wav",
+      "X-Upload-Name": "recording.wav",
+      "X-Upload-Source": isLive ? "live" : "recording",
+      "X-Device-Id": currentSession?.device_id || "",
+    },
+    body: blob,
+    signal: controller.signal,
+    cache: "no-store",
+  });
     clearTimeout(timeout);
     if (!response.ok) {
       const message = await response.text();
@@ -412,20 +490,38 @@ const validateProfile = () => {
 };
 
 startCta.addEventListener("click", () => {
+  if (profileSection.style.display === "none") {
+    recordSection.scrollIntoView({ behavior: "smooth" });
+    return;
+  }
   profileSection.classList.remove("demo--hidden");
   profileSection.scrollIntoView({ behavior: "smooth" });
 });
 
 profileForm.addEventListener("click", selectChip);
 
-profileForm.addEventListener("submit", (event) => {
+profileForm.addEventListener("submit", async (event) => {
   event.preventDefault();
   if (!validateProfile()) {
     return;
   }
-  profileSection.style.display = "none";
-  recordSection.classList.remove("demo--hidden");
-  recordSection.scrollIntoView({ behavior: "smooth" });
+  profileError.textContent = "Saving session...";
+  try {
+    const session = {
+      device_id: generateDeviceId(),
+      profile: profileData,
+      created_at: new Date().toISOString(),
+    };
+    await postSession(session);
+    await storeSession(session);
+    profileError.textContent = "";
+    applySessionState(session);
+    recordSection.scrollIntoView({ behavior: "smooth" });
+  } catch (error) {
+    console.error("[session] save failed", error);
+    profileError.textContent =
+      "We couldn't save this session. Please try again.";
+  }
 });
 
 recordBtn.addEventListener("click", () => {
@@ -462,3 +558,4 @@ cancelAnalysis.addEventListener("click", () => {
 
 initChart();
 resetUI();
+hydrateSession();
