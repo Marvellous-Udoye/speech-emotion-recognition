@@ -1,6 +1,7 @@
-from pathlib import Path
 import time
 import traceback
+from contextlib import asynccontextmanager
+from pathlib import Path
 
 from fastapi import FastAPI, Request
 from fastapi.responses import HTMLResponse, JSONResponse
@@ -8,20 +9,29 @@ from fastapi.staticfiles import StaticFiles
 
 from .model import EmotionModel
 
-app = FastAPI(title="Live Speech Emotion Recognition")
 model: EmotionModel | None = None
 
 STATIC_DIR = Path(__file__).parent / "static"
 
 
-@app.on_event("startup")
-def _load_model() -> None:
+@asynccontextmanager
+async def lifespan(app: FastAPI):
     global model
     try:
         model = EmotionModel()
+        print("[startup] model loaded", flush=True)
     except FileNotFoundError as exc:
         model = None
         print(f"[startup] {exc}", flush=True)
+
+    yield
+    print("[shutdown] app stopping", flush=True)
+
+
+app = FastAPI(
+    title="Live Speech Emotion Recognition",
+    lifespan=lifespan,
+)
 
 
 @app.middleware("http")
