@@ -2,7 +2,7 @@ import json
 import time
 import traceback
 from pathlib import Path
-from typing import Dict, Tuple
+from typing import Dict
 
 import numpy as np
 from tensorflow.keras.models import load_model
